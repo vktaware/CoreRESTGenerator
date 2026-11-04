@@ -1,0 +1,63 @@
+using Microsoft.AspNetCore.Mvc;
+using {{Namespace}}.Repositories;
+using {{Namespace}}.Models;
+using Microsoft.AspNetCore.Authorization;
+using System;
+
+
+namespace {{Namespace}}.Controllers
+{
+    [Route("api/[controller]")]
+    [Authorize]
+    [ApiController]
+    public class {{TableName}}Controller : ControllerBase
+    {
+        private readonly I{{TableName}}Repository _repository;
+
+        public {{TableName}}Controller(I{{TableName}}Repository repository)
+        {
+            _repository = repository;
+        }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var result = _repository.GetAll();
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            var result = _repository.GetById(id);
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public IActionResult Add([FromBody] {{TableName}} entity)
+        {
+            _repository.Add(entity);
+            return CreatedAtAction(nameof(GetById), new { id = entity.{{PrimaryKey}} }, entity);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody] {{TableName}} entity)
+        {
+            if (id != entity.{{PrimaryKey}})
+                return BadRequest();
+
+            _repository.Update(entity);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _repository.Delete(id);
+            return NoContent();
+        }
+    }
+}

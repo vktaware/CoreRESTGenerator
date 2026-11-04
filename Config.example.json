@@ -1,0 +1,6 @@
+{
+  "ConnectionString": "data source=<your-server>;initial catalog=<your-database>;user id=<your-user>;password=<your-password>;TrustServerCertificate=True;",
+  "OutputDirectory": "C:/GeneratedMicroservices",
+  "SelectedTables": [ "Country", "State" ],
+  "StoredProcedures": []
+}

@@ -1,0 +1,73 @@
+using System.Collections.Generic;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using Dapper;
+using System;
+using {{Namespace}}.Models;
+
+namespace {{Namespace}}.Repositories
+{
+    public interface I{{TableName}}Repository
+    {
+        IEnumerable<{{TableName}}> GetAll();
+        {{TableName}} GetById(int id);
+        void Add({{TableName}} entity);
+        void Update({{TableName}} entity);
+        void Delete(int id);
+    }
+
+    public class {{TableName}}Repository : I{{TableName}}Repository
+    {
+        private readonly string _connectionString;
+
+        public {{TableName}}Repository(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+        public IEnumerable<{{TableName}}> GetAll()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var sql = "SELECT * FROM {{TableName}}";
+                return connection.Query<{{TableName}}>(sql);
+            }
+        }
+
+        public {{TableName}} GetById(int id)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var sql = "SELECT * FROM {{TableName}} WHERE {{PrimaryKey}} = @Id";
+                return connection.QuerySingleOrDefault<{{TableName}}>(sql, new { Id = id });
+            }
+        }
+
+        public void Add({{TableName}} entity)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var sql = "INSERT INTO {{TableName}} ({{#each Columns}}{{COLUMN_NAME}}{{#unless @last}}, {{/unless}}{{/each}}) VALUES ({{#each Columns}}@{{COLUMN_NAME}}{{#unless @last}}, {{/unless}}{{/each}})";
+                connection.Execute(sql, entity);
+            }
+        }
+
+        public void Update({{TableName}} entity)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var sql = "UPDATE {{TableName}} SET {{#each Columns}}{{COLUMN_NAME}} = @{{COLUMN_NAME}}{{#unless @last}}, {{/unless}}{{/each}} WHERE {{PrimaryKey}} = @{{PrimaryKey}}";
+                connection.Execute(sql, entity);
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var sql = "DELETE FROM {{TableName}} WHERE {{PrimaryKey}} = @Id";
+                connection.Execute(sql, new { Id = id });
+            }
+        }
+    }
+}

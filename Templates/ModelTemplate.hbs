@@ -1,0 +1,15 @@
+using System;
+
+namespace {{Namespace}}.Models
+{
+    {{#if HasDateTime}}
+    using System;
+    {{/if}}
+
+    public class {{TableName}}
+    {
+        {{#each Columns}}
+        public {{DATA_TYPE}} {{COLUMN_NAME}} { get; set; }
+        {{/each}}
+    }
+}
